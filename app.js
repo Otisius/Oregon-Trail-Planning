@@ -1,5 +1,5 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
-import { getFirestore, collection, onSnapshot, addDoc, deleteDoc, doc, updateDoc, query, orderBy } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore.js";
+import { getFirestore, collection, onSnapshot, addDoc, deleteDoc, doc, updateDoc, query, orderBy, getDoc, setDoc } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore.js";
 
 // ⚠️ PASTE YOUR FIREBASE CONFIG HERE BEFORE UPLOADING ⚠️
 const firebaseConfig = {
@@ -179,31 +179,88 @@ document.addEventListener('keydown', (e) => {
   if (e.key === 'k' || e.key === 'K') { document.body.classList.toggle('kanban-active'); }
 });
 
-// V2 AUTO-LOADER SCRIPT
-document.getElementById('load-v2-btn').addEventListener('click', async () => {
-  if(!confirm("This will load the original V2 Roadmap into your live database. Proceed?")) return;
-  
-  const v2Tasks = [
-    { title: "Project setup", desc: "", priority: "low" },
-    { title: "Player controller", desc: "Use Unity's Input System, not Input.GetKey.", priority: "high" },
-    { title: "Wagon controller", desc: "", priority: "med" },
-    { title: "World & camera", desc: "Use Cinemachine.", priority: "med" },
-    { title: "GameManager + supply system", desc: "Singleton GameManager owns all global state.", priority: "high" },
-    { title: "Party system", desc: "Store members as plain C# classes, not MonoBehaviours.", priority: "high" },
-    { title: "EventBus", desc: "A generic pub/sub event bus.", priority: "high" },
-    { title: "Random event system", desc: "", priority: "med" },
-    { title: "HUD + event UI", desc: "UI reads from systems — never owns state.", priority: "low" },
-    { title: "Visual art pass", desc: "Megascans and styling.", priority: "low" }
+// ==========================================
+// TRUE "RUN-ONCE" V2 ROADMAP INJECTOR
+// ==========================================
+async function autoSeedDatabase() {
+  const configRef = doc(db, 'system', 'config');
+  const configSnap = await getDoc(configRef);
+
+  if (configSnap.exists() && configSnap.data().v2Loaded === true) {
+    console.log("V2 Roadmap was already loaded previously. Skipping.");
+    return; 
+  }
+
+  console.log("First time run detected. Injecting the full 37-task V2 roadmap...");
+
+  const fullRoadmap = [
+    // --- UNITY P1 ---
+    { title: "Project setup", desc: "", priority: "med" },
+    { title: "Player controller", desc: "Use Unity's Input System, not Input.GetKey — remote players are driven by the network, not a keyboard.", priority: "high" },
+    { title: "Wagon controller", desc: "", priority: "high" },
+    { title: "World & camera", desc: "Use Cinemachine — manually managing cameras will cause pain when you add multiplayer.", priority: "med" },
+    
+    // --- UNITY P2 ---
+    { title: "GameManager + supply system", desc: "Singleton GameManager owns all global state. Resources must be configurable via ScriptableObjects — never hardcoded.", priority: "high" },
+    { title: "Party system", desc: "Store members as plain C# classes, not MonoBehaviours — so they can sync over the network later without refactoring.", priority: "high" },
+    { title: "EventBus", desc: "A generic pub/sub event bus all systems communicate through. No system calls another directly. Get this in before anything else.", priority: "high" },
+    { title: "Random event system", desc: "", priority: "high" },
+    { title: "HUD + event UI", desc: "UI reads from systems — never owns state or calculates anything.", priority: "high" },
+    { title: "Win + death conditions", desc: "", priority: "high" },
+
+    // --- UNITY P3 ---
+    { title: "Active resource minigame", desc: "", priority: "high" },
+    { title: "Hazard / obstacle system", desc: "", priority: "high" },
+    { title: "Trading post / resupply", desc: "", priority: "high" },
+    { title: "Vehicle degradation", desc: "", priority: "high" },
+    { title: "Rest system", desc: "", priority: "high" },
+    { title: "Environmental conditions", desc: "", priority: "med" },
+
+    // --- UNITY P4 ---
+    { title: "Visual art pass", desc: "", priority: "low" },
+    { title: "Audio", desc: "", priority: "low" },
+    { title: "Save system", desc: "", priority: "high" },
+    { title: "Playtesting + tuning", desc: "", priority: "low" },
+    { title: "WebGL build → itch.io", desc: "", priority: "low" },
+
+    // --- UNREAL P1 ---
+    { title: "[UE5] Blueprint project setup", desc: "", priority: "med" },
+    { title: "[UE5] Player controller + Enhanced Input", desc: "Use Enhanced Input, not the legacy input system — same reason as Unity's Input System.", priority: "high" },
+    { title: "[UE5] Nanite terrain + Lumen lighting", desc: "Get Lumen stable before building gameplay on top. No baked lighting — ever.", priority: "med" },
+    { title: "[UE5] GameMode + GameState + GameInstance", desc: "UE's equivalent of GameManager. Map these three to what you built in Unity before writing any gameplay code.", priority: "high" },
+
+    // --- UNREAL P2 ---
+    { title: "[UE5] Supply system → Game Instance", desc: "Rebuild SupplySystem inside the Blueprint Game Instance — persists across level loads, accessible from anywhere.", priority: "high" },
+    { title: "[UE5] EventBus → Event Dispatchers", desc: "Blueprint Event Dispatchers are the UE equivalent. Same rule: nothing calls anything directly.", priority: "high" },
+    { title: "[UE5] Random events → Data Assets", desc: "UE's equivalent of ScriptableObjects. Define fields in a Blueprint Data Asset, edit instances in the content browser.", priority: "high" },
+    { title: "[UE5] UMG HUD", desc: "Blueprint widgets. Same rule as Unity: UI reads state, never owns it.", priority: "high" },
+    { title: "[UE5] Vehicle → Chaos Wheeled Vehicle", desc: "", priority: "high" },
+
+    // --- UNREAL P3 ---
+    { title: "[UE5] World Partition + PCG foliage", desc: "World Partition handles the open world. PCG scatters rocks, grass, trees.", priority: "med" },
+    { title: "[UE5] Dynamic sky + volumetric atmosphere", desc: "", priority: "med" },
+    { title: "[UE5] Free realistic assets", desc: "Quixel Megascans are free with UE. Fab.com free tier and Poly Haven cover the rest. You don't make any of it.", priority: "low" },
+    { title: "[UE5] Animal AI", desc: "", priority: "high" },
+
+    // --- UNREAL P4 ---
+    { title: "[UE5] Blueprint replication", desc: "No external library needed. Mark variables as Replicated in Blueprint, use Server/Client events.", priority: "high" },
+    { title: "[UE5] Dedicated server + Edgegap", desc: "", priority: "med" },
+    { title: "[UE5] Ship", desc: "The dream version is live.", priority: "low" }
   ];
 
-  for (let i = 0; i < v2Tasks.length; i++) {
+  for (let i = 0; i < fullRoadmap.length; i++) {
     await addDoc(tasksCollection, {
-      title: v2Tasks[i].title, 
-      desc: v2Tasks[i].desc, 
+      title: fullRoadmap[i].title, 
+      desc: fullRoadmap[i].desc, 
       isDone: false, 
-      priority: v2Tasks[i].priority, 
-      order: i
+      priority: fullRoadmap[i].priority, 
+      order: i, 
+      createdAt: new Date()
     });
   }
-  alert("V2 Roadmap Loaded! You can now drag, edit, and check them off.");
-});
+
+  await setDoc(configRef, { v2Loaded: true });
+  console.log("V2 Roadmap injection complete and locked.");
+}
+
+autoSeedDatabase();
