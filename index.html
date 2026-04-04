@@ -17,13 +17,13 @@
         <button class="btn" id="load-v2-btn" style="border-color: var(--amber); color: var(--amber);">📥 Load V2 Roadmap</button>
         <button class="btn" id="kanban-btn">🗂️ Kanban View (K)</button>
         <input type="text" id="search-input" class="search-bar" placeholder="Search tasks ( / )">
-        
         <button class="btn" id="archive-btn">👁️ Hide Completed</button>
         <button class="btn" id="theme-btn">☀️ Light Mode</button>
       </div>
     </div>
 
     <div class="header">
+      <div class="header-eyebrow">// dev plan v6 — mega update</div>
       <h1 class="header-title">Oregon Trail<br><span>Game Roadmap</span></h1>
       <p class="header-sub">Press 'N' to add a task. Press 'K' for Kanban. Syncs instantly across the web.</p>
     </div>
@@ -37,6 +37,7 @@
     </div>
 
     <div id="board-layout" class="kanban-container">
+      
       <div class="phase">
         <div class="phase-header">
           <div class="phase-pill pill-1">Phase 1</div>
@@ -44,7 +45,8 @@
           <div style="margin-left: auto; font-family: var(--font-mono); font-size: 10px; color: var(--text3);" id="phase-1-prog">0/0</div>
         </div>
         
-        <div class="tasks" id="task-list"></div>
+        <div class="tasks" id="task-list">
+          </div>
         
         <div class="add-task-wrap no-print" style="margin-top: 15px; display: flex; gap: 8px;">
           <input type="text" id="new-task-input" placeholder="Enter new task (Press N)..." style="flex:1; padding:10px; border-radius:6px; background:var(--bg2); border:1px solid var(--border2); color:var(--text); font-family:var(--font-body); outline: none;">
@@ -56,6 +58,7 @@
           <button id="add-task-btn" class="add-task-btn" style="width:auto; padding:0 20px; background:var(--green-dim); color:var(--green); border: 1px solid var(--green-border); border-radius: 6px; cursor: pointer; font-family: var(--font-mono); font-size: 11px; text-transform: uppercase;">+ Add</button>
         </div>
       </div>
+      
     </div>
   </div>
 
