@@ -17,6 +17,7 @@
   --font-mono: 'IBM Plex Mono', monospace;
 }
 
+/* Light Theme overrides */
 [data-theme="light"] {
   --bg: #f5f2eb; --bg2: #ffffff; --bg3: #ebe5d8;
   --border: rgba(0,0,0,0.1); --border2: rgba(0,0,0,0.15);
@@ -28,13 +29,12 @@ body{background:var(--bg);color:var(--text);font-family:var(--font-body);font-si
 body::before{content:'';position:fixed;inset:0;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");pointer-events:none;z-index:0;opacity:0.6}
 .page{position:relative;z-index:1;max-width:760px;margin:0 auto;padding:48px 24px 80px}
 
-/* HEADER & TYPOGRAPHY */
 .header{margin-bottom:48px}
+.header-eyebrow{font-family:var(--font-mono);font-size:11px;color:var(--amber);letter-spacing:0.15em;text-transform:uppercase;margin-bottom:10px}
 .header-title{font-family:var(--font-display);font-size:clamp(28px,5vw,42px);font-weight:600;color:var(--text);line-height:1.15;margin-bottom:12px}
 .header-title span{color:var(--amber)}
 .header-sub{font-size:13px;color:var(--text2);max-width:480px;line-height:1.7}
 
-/* PROGRESS BAR */
 .progress-wrap{position: sticky; top: 12px; z-index: 100; margin-bottom:40px; padding:16px 18px; background:var(--bg2); border:0.5px solid var(--border2); border-radius:8px; box-shadow: 0 10px 30px rgba(0,0,0,0.2); backdrop-filter: blur(10px);}
 .progress-row{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px}
 .progress-label{font-family:var(--font-mono);font-size:11px;color:var(--text3);letter-spacing:0.08em}
@@ -42,7 +42,6 @@ body::before{content:'';position:fixed;inset:0;background-image:url("data:image/
 .progress-track{height:3px;background:var(--bg3);border-radius:99px;overflow:hidden}
 .progress-fill{height:100%;background:linear-gradient(90deg,var(--amber),#e8b86d);border-radius:99px;transition:width 0.4s cubic-bezier(0.4,0,0.2,1);width:0%}
 
-/* PHASES & TASKS */
 .phase{margin-bottom:36px}
 .phase-header{display:flex;align-items:center;gap:10px;margin-bottom:14px}
 .phase-pill{font-family:var(--font-mono);font-size:10px;font-weight:500;letter-spacing:0.12em;text-transform:uppercase;padding:3px 10px;border-radius:99px;white-space:nowrap}
@@ -51,29 +50,51 @@ body::before{content:'';position:fixed;inset:0;background-image:url("data:image/
 .phase-line{flex:1;height:0.5px;background:var(--border)}
 .tasks{display:flex;flex-direction:column;gap:6px}
 
-/* TASK STYLING */
 .task{position:relative;display:flex;align-items:flex-start;gap:12px;background:var(--bg2);border:0.5px solid var(--border);border-radius:7px;padding:12px 14px;cursor:grab;transition:border-color 0.15s,background 0.15s;user-select:none}
 .task:hover{border-color:var(--border2);background:var(--bg3)}
 .task:active{cursor:grabbing}
 .task.done{background:var(--bg);border-color:var(--border);opacity:0.6}
 .task.done .task-title{text-decoration:line-through;color:var(--text3)}
+.task.done .task-desc{color:var(--text3)}
+
 .task-check{width:17px;height:17px;min-width:17px;border-radius:50%;border:1px solid var(--text3);display:flex;align-items:center;justify-content:center;margin-top:1px;transition:background 0.15s,border-color 0.15s; cursor:pointer;}
 .task.done .task-check{background:var(--green-dim);border-color:var(--green)}
 .checkmark{width:7px;height:7px;border-right:1.5px solid var(--green);border-bottom:1.5px solid var(--green);transform:rotate(45deg) translate(-1px,-1px);display:none}
 .task.done .checkmark{display:block}
+
 .task-body{flex:1;min-width:0; pointer-events: none;}
 .task-title{font-size:13px;font-weight:500;color:var(--text);margin-bottom:3px}
+.task-desc{font-size:12px;color:var(--text2);line-height:1.6;margin-bottom:4px;}
 
-/* TAGS */
 .task-tag{font-family:var(--font-mono);font-size:10px;padding:2px 8px;border-radius:4px;white-space:nowrap;align-self:flex-start;margin-top:2px;letter-spacing:0.05em; display: inline-block;}
 .tag-setup{background:var(--blue-dim);color:var(--blue)}
 .tag-code{background:var(--amber-dim);color:var(--amber)}
 .tag-system{background:var(--red-dim);color:var(--red)}
 
-/* DELETE BUTTON */
 .task-delete { position: absolute; right: 12px; top: 12px; width: 22px; height: 22px; background: var(--red-dim); color: var(--red); border: 1px solid rgba(196,106,90,0.25); border-radius: 4px; display: flex; align-items: center; justify-content: center; font-size: 10px; cursor: pointer; opacity: 0; transition: opacity 0.2s, background 0.2s; z-index: 2;}
 .task:hover .task-delete { opacity: 1; }
 .task-delete:hover { background: var(--red); color: #fff; }
 
-/* DRAG AND DROP VISUALS */
 .sortable-ghost { opacity: 0.4; background: var(--bg3); border: 1px dashed var(--amber); }
+
+/* V6 TOOLBAR & SEARCH */
+.toolbar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; background: var(--bg2); padding: 12px; border-radius: 8px; border: 1px solid var(--border2); }
+.search-bar { background: var(--bg); border: 1px solid var(--border2); color: var(--text); padding: 6px 12px; border-radius: 6px; font-family: var(--font-body); font-size: 12px; width: 160px; outline: none; }
+.search-bar:focus { border-color: var(--amber); }
+.btn { background: transparent; border: 1px solid var(--border2); color: var(--text2); padding: 6px 12px; border-radius: 6px; cursor: pointer; font-family: var(--font-mono); font-size: 11px; text-transform: uppercase; transition: all 0.2s;}
+.btn:hover { background: var(--bg3); color: var(--text); }
+.hidden { display: none !important; }
+
+/* V6 KANBAN MODE */
+body.kanban-active .kanban-container { display: flex; gap: 24px; overflow-x: auto; padding-bottom: 20px; align-items: flex-start; }
+body.kanban-active .phase { min-width: 320px; background: var(--bg2); padding: 16px; border-radius: 12px; border: 1px solid var(--border2); }
+body.kanban-active .task { background: var(--bg); }
+
+/* V6 PRINT TO PDF MODE */
+@media print {
+  body { background: #fff !important; color: #000 !important; }
+  .no-print, .toolbar, .progress-wrap, .add-task-wrap { display: none !important; }
+  .task { border: 1px solid #ccc !important; break-inside: avoid; background: #fff !important; }
+  .task-title { color: #000 !important; font-weight: bold; }
+  .task-desc { color: #444 !important; }
+}
