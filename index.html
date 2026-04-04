@@ -3,16 +3,20 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Oregon Trail — V4 Live</title>
+  <title>Oregon Trail — V5 Live</title>
   <link rel="stylesheet" href="style.css">
   <script src="https://cdn.jsdelivr.net/npm/sortablejs@latest/Sortable.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
 </head>
 <body>
   <div class="page" id="app-wrap">
     
     <div class="toolbar" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
       <div style="font-family: var(--font-mono); font-size: 11px; color: var(--green);">⬤ LIVE CLOUD SYNC</div>
-      <button class="btn" id="theme-btn" style="background: transparent; border: 1px solid var(--border2); color: var(--text2); padding: 6px 12px; border-radius: 6px; cursor: pointer; font-family: var(--font-mono); font-size: 11px; text-transform: uppercase;">☀️ Light Mode</button>
+      <div style="display: flex; gap: 10px;">
+        <button class="btn" id="archive-btn" style="background: transparent; border: 1px solid var(--border2); color: var(--text2); padding: 6px 12px; border-radius: 6px; cursor: pointer; font-family: var(--font-mono); font-size: 11px; text-transform: uppercase;">👁️ Hide Completed</button>
+        <button class="btn" id="theme-btn" style="background: transparent; border: 1px solid var(--border2); color: var(--text2); padding: 6px 12px; border-radius: 6px; cursor: pointer; font-family: var(--font-mono); font-size: 11px; text-transform: uppercase;">☀️ Light Mode</button>
+      </div>
     </div>
 
     <div class="header">
@@ -32,11 +36,10 @@
       <div class="phase-header">
         <div class="phase-pill pill-1">Phase 1</div>
         <div class="phase-name">Foundation Tasks</div>
-        <div class="phase-line"></div>
+        <div style="margin-left: auto; font-family: var(--font-mono); font-size: 10px; color: var(--text3);" id="phase-1-prog">0/0</div>
       </div>
       
-      <div class="tasks" id="task-list">
-        </div>
+      <div class="tasks" id="task-list"></div>
       
       <div class="add-task-wrap" style="margin-top: 15px; display: flex; gap: 8px;">
         <input type="text" id="new-task-input" placeholder="Enter new task..." style="flex:1; padding:10px; border-radius:6px; background:var(--bg2); border:1px solid var(--border2); color:var(--text); font-family:var(--font-body); outline: none;">
