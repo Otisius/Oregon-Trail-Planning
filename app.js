@@ -14,12 +14,28 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
-// Query tasks, ordered by their 'order' number
 const tasksCollection = collection(db, 'tasks');
 const q = query(tasksCollection, orderBy("order", "asc"));
 const taskListDiv = document.getElementById('task-list');
 
-// Initialize SortableJS (Drag and Drop)
+let isArchiveMode = false;
+
+// Audio context for the satisfying 'ding'
+const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+function playDing() {
+  const oscillator = audioCtx.createOscillator();
+  const gainNode = audioCtx.createGain();
+  oscillator.type = 'sine';
+  oscillator.frequency.setValueAtTime(800, audioCtx.currentTime); // High pitch
+  oscillator.frequency.exponentialRampToValueAtTime(1200, audioCtx.currentTime + 0.1);
+  gainNode.gain.setValueAtTime(0.5, audioCtx.currentTime);
+  gainNode.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.3);
+  oscillator.connect(gainNode);
+  gainNode.connect(audioCtx.destination);
+  oscillator.start();
+  oscillator.stop(audioCtx.currentTime + 0.3);
+}
+
 new Sortable(taskListDiv, {
   animation: 150,
   ghostClass: 'sortable-ghost',
@@ -28,27 +44,30 @@ new Sortable(taskListDiv, {
     const items = taskListDiv.children;
     for (let i = 0; i < items.length; i++) {
       const taskId = items[i].getAttribute('data-id');
-      if(taskId) {
-        await updateDoc(doc(db, 'tasks', taskId), { order: i });
-      }
+      if(taskId) await updateDoc(doc(db, 'tasks', taskId), { order: i });
     }
   },
 });
 
-// Update Progress Bar
 function updateProgress(total, done) {
   document.getElementById('prog-text').textContent = `${done} / ${total} tasks`;
-  document.getElementById('prog-fill').style.width = total === 0 ? '0%' : Math.round((done / total) * 100) + '%';
+  document.getElementById('phase-1-prog').textContent = `${done} / ${total} completed`;
+  
+  const percentage = total === 0 ? 0 : Math.round((done / total) * 100);
+  document.getElementById('prog-fill').style.width = percentage + '%';
+
+  // Trigger Confetti!
+  if (percentage === 100 && total > 0) {
+    confetti({ particleCount: 150, spread: 70, origin: { y: 0.6 } });
+  }
 }
 
-// Helper to get priority colors
 function getPriorityTag(priority) {
   if (priority === 'high') return '<div class="task-tag tag-system">High Priority</div>';
   if (priority === 'med') return '<div class="task-tag tag-code">Med Priority</div>';
   return '<div class="task-tag tag-setup">Low Priority</div>';
 }
 
-// Real-time Database Listener
 onSnapshot(q, (snapshot) => {
   taskListDiv.innerHTML = '';
   let totalTasks = 0;
@@ -60,6 +79,9 @@ onSnapshot(q, (snapshot) => {
     totalTasks++;
     if (task.isDone) doneTasks++;
     
+    // Skip rendering if archive mode is on and task is done
+    if (isArchiveMode && task.isDone) return;
+
     const taskEl = document.createElement('div');
     taskEl.className = `task ${task.isDone ? 'done' : ''}`;
     taskEl.setAttribute('data-id', taskId);
@@ -77,39 +99,15 @@ onSnapshot(q, (snapshot) => {
   updateProgress(totalTasks, doneTasks);
 });
 
-// Add Task Form Handler
-document.getElementById('add-task-btn').addEventListener('click', async () => {
-  const input = document.getElementById('new-task-input');
-  const priority = document.getElementById('task-priority').value;
-  
-  if (input.value.trim() === '') return;
-
-  await addDoc(tasksCollection, {
-    title: input.value,
-    isDone: false,
-    priority: priority,
-    order: 9999, // High number sends it to bottom
-    createdAt: new Date()
-  });
-  
-  input.value = '';
+// Archive Toggle Logic
+document.getElementById('archive-btn').addEventListener('click', (e) => {
+  isArchiveMode = !isArchiveMode;
+  e.target.textContent = isArchiveMode ? '👁️ Show Completed' : '👁️ Hide Completed';
+  // Force a re-render by fetching data again
+  onSnapshot(q, () => {}); 
 });
 
-// Click Delegation (Checkmarks & Delete)
-taskListDiv.addEventListener('click', async (e) => {
-  if (e.target.closest('.task-delete')) {
-    const id = e.target.closest('.task-delete').getAttribute('data-id');
-    await deleteDoc(doc(db, 'tasks', id));
-  } 
-  else if (e.target.closest('.task-check')) {
-    const taskEl = e.target.closest('.task');
-    const id = taskEl.getAttribute('data-id');
-    const isCurrentlyDone = taskEl.classList.contains('done');
-    await updateDoc(doc(db, 'tasks', id), { isDone: !isCurrentlyDone });
-  }
-});
-
-// Theme Toggle Logic
+// Theme Toggle
 document.getElementById('theme-btn').addEventListener('click', () => {
   const isLight = document.body.getAttribute('data-theme') === 'light';
   if (isLight) {
@@ -122,9 +120,35 @@ document.getElementById('theme-btn').addEventListener('click', () => {
     localStorage.setItem('theme', 'light');
   }
 });
-
-// Load Theme on Boot
 if(localStorage.getItem('theme') === 'light') {
   document.body.setAttribute('data-theme', 'light');
   document.getElementById('theme-btn').textContent = '🌙 Dark Mode';
 }
+
+// Add Task
+document.getElementById('add-task-btn').addEventListener('click', async () => {
+  const input = document.getElementById('new-task-input');
+  const priority = document.getElementById('task-priority').value;
+  if (input.value.trim() === '') return;
+  await addDoc(tasksCollection, {
+    title: input.value, isDone: false, priority: priority, order: 9999, createdAt: new Date()
+  });
+  input.value = '';
+});
+
+// Click Delegation
+taskListDiv.addEventListener('click', async (e) => {
+  if (e.target.closest('.task-delete')) {
+    const id = e.target.closest('.task-delete').getAttribute('data-id');
+    await deleteDoc(doc(db, 'tasks', id));
+  } 
+  else if (e.target.closest('.task-check') || e.target.closest('.task')) {
+    if (e.target.closest('.task-delete')) return;
+    const taskEl = e.target.closest('.task');
+    const id = taskEl.getAttribute('data-id');
+    const isCurrentlyDone = taskEl.classList.contains('done');
+    
+    if (!isCurrentlyDone) playDing(); // Play sound when completing a task
+    await updateDoc(doc(db, 'tasks', id), { isDone: !isCurrentlyDone });
+  }
+});
