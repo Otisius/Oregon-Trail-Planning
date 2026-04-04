@@ -1,66 +1,243 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Oregon Trail — V6 Mega</title>
-  <link rel="stylesheet" href="style.css">
-  <script src="https://cdn.jsdelivr.net/npm/sortablejs@latest/Sortable.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Oregon Trail — Dev Plan</title>
+<!-- Dependencies for app.js -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Sortable/1.15.2/Sortable.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.2/dist/confetti.browser.min.js"></script>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600&family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@300;400;500&display=swap');
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#0f0e0c;--bg2:#161511;--bg3:#1e1c17;
+  --border:rgba(255,255,255,0.07);--border2:rgba(255,255,255,0.12);
+  --text:#e8e2d6;--text2:#a89f8e;--text3:#6b6358;
+  --amber:#d4903a;--amber-dim:rgba(212,144,58,0.12);--amber-border:rgba(212,144,58,0.3);
+  --green:#7aad6e;--green-dim:rgba(122,173,110,0.1);--green-border:rgba(122,173,110,0.3);
+  --blue:#6fa3c8;--blue-dim:rgba(111,163,200,0.1);
+  --red:#c46a5a;--red-dim:rgba(196,106,90,0.1);
+  --purple:#9b84c4;--purple-dim:rgba(155,132,196,0.1);
+  --teal:#5aada0;--teal-dim:rgba(90,173,160,0.1);
+  --font-display:'Playfair Display',Georgia,serif;
+  --font-body:'IBM Plex Sans',sans-serif;
+  --font-mono:'IBM Plex Mono',monospace;
+}
+body{background:var(--bg);color:var(--text);font-family:var(--font-body);font-size:14px;line-height:1.6;min-height:100vh}
+body[data-theme="light"]{
+  --bg:#f5f0e8;--bg2:#ede8de;--bg3:#e4ddd0;
+  --border:rgba(0,0,0,0.08);--border2:rgba(0,0,0,0.14);
+  --text:#1a1814;--text2:#5a5248;--text3:#9a9088;
+}
+body::before{content:'';position:fixed;inset:0;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");pointer-events:none;z-index:0;opacity:0.6}
+.page{position:relative;z-index:1;max-width:760px;margin:0 auto;padding:48px 24px 80px}
+
+/* Header */
+.header{margin-bottom:48px}
+.header-eyebrow{font-family:var(--font-mono);font-size:11px;color:var(--amber);letter-spacing:0.15em;text-transform:uppercase;margin-bottom:10px}
+.header-title{font-family:var(--font-display);font-size:clamp(28px,5vw,42px);font-weight:600;color:var(--text);line-height:1.15;margin-bottom:12px}
+.header-title span{color:var(--amber)}
+.header-sub{font-size:13px;color:var(--text2);max-width:480px;line-height:1.7}
+
+/* Toolbar */
+.toolbar{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:20px;align-items:center}
+.toolbar input[type="text"]{flex:1;min-width:160px;background:var(--bg2);border:0.5px solid var(--border2);border-radius:6px;padding:7px 12px;color:var(--text);font-family:var(--font-body);font-size:13px;outline:none}
+.toolbar input[type="text"]::placeholder{color:var(--text3)}
+.toolbar input[type="text"]:focus{border-color:var(--amber)}
+.toolbar select{background:var(--bg2);border:0.5px solid var(--border2);border-radius:6px;padding:7px 10px;color:var(--text2);font-family:var(--font-mono);font-size:11px;outline:none;cursor:pointer}
+.toolbar-btn{background:var(--bg2);border:0.5px solid var(--border2);border-radius:6px;padding:7px 12px;color:var(--text2);font-family:var(--font-mono);font-size:11px;cursor:pointer;white-space:nowrap;transition:border-color 0.15s,color 0.15s}
+.toolbar-btn:hover{border-color:var(--amber);color:var(--amber)}
+.toolbar-btn.add{background:var(--amber-dim);border-color:var(--amber-border);color:var(--amber)}
+.search-wrap{display:flex;align-items:center;gap:8px;flex:2;min-width:160px}
+.search-wrap input{flex:1;background:var(--bg2);border:0.5px solid var(--border2);border-radius:6px;padding:7px 12px;color:var(--text);font-family:var(--font-body);font-size:13px;outline:none}
+.search-wrap input::placeholder{color:var(--text3)}
+.search-wrap input:focus{border-color:var(--amber)}
+
+/* Progress */
+.progress-wrap{margin-bottom:40px;padding:16px 18px;background:var(--bg2);border:0.5px solid var(--border2);border-radius:8px}
+.progress-row{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px}
+.progress-label{font-family:var(--font-mono);font-size:11px;color:var(--text3);letter-spacing:0.08em}
+.progress-count{font-family:var(--font-mono);font-size:11px;color:var(--amber)}
+.progress-track{height:3px;background:var(--bg3);border-radius:99px;overflow:hidden}
+.progress-fill{height:100%;background:linear-gradient(90deg,var(--amber),#e8b86d);border-radius:99px;transition:width 0.4s cubic-bezier(0.4,0,0.2,1);width:0%}
+
+/* Task list */
+#task-list{display:flex;flex-direction:column;gap:6px;margin-bottom:40px}
+.task{display:flex;align-items:flex-start;gap:12px;background:var(--bg2);border:0.5px solid var(--border);border-radius:7px;padding:12px 14px;cursor:pointer;transition:border-color 0.15s,background 0.15s;user-select:none}
+.task:hover{border-color:var(--border2);background:var(--bg3)}
+.task.done{background:var(--bg);border-color:var(--border)}
+.task.done .task-title{text-decoration:line-through;color:var(--text3)}
+.task.done .task-desc{color:var(--text3)}
+.task.hidden{display:none}
+.task-check{width:17px;height:17px;min-width:17px;border-radius:50%;border:1px solid var(--text3);display:flex;align-items:center;justify-content:center;margin-top:1px;transition:background 0.15s,border-color 0.15s}
+.task.done .task-check{background:var(--green-dim);border-color:var(--green)}
+.checkmark{width:7px;height:7px;border-right:1.5px solid var(--green);border-bottom:1.5px solid var(--green);transform:rotate(45deg) translate(-1px,-1px);display:none}
+.task.done .checkmark{display:block}
+.task-body{flex:1;min-width:0}
+.task-title{font-size:13px;font-weight:500;color:var(--text);margin-bottom:3px}
+.task-desc{font-size:12px;color:var(--text2);line-height:1.6}
+.task-tag{font-family:var(--font-mono);font-size:10px;padding:2px 8px;border-radius:4px;white-space:nowrap;display:inline-block;margin-top:4px;letter-spacing:0.05em}
+.tag-setup{background:var(--blue-dim);color:var(--blue)}
+.tag-code{background:var(--amber-dim);color:var(--amber)}
+.tag-system{background:var(--red-dim);color:var(--red)}
+.task-delete{font-size:12px;color:var(--text3);padding:2px 4px;border-radius:4px;transition:color 0.15s;margin-left:4px;flex-shrink:0}
+.task-delete:hover{color:var(--red)}
+.sortable-ghost{opacity:0.4}
+
+/* Loading state */
+.loading{text-align:center;padding:40px;font-family:var(--font-mono);font-size:12px;color:var(--text3)}
+
+/* Sections (static reference content below) */
+.section-divider{display:flex;align-items:center;gap:14px;margin:48px 0 32px}
+.section-divider-line{flex:1;height:0.5px;background:var(--border)}
+.section-divider-label{font-family:var(--font-mono);font-size:10px;letter-spacing:0.15em;text-transform:uppercase;padding:4px 12px;border-radius:99px;white-space:nowrap}
+.lbl-unity{background:rgba(111,163,200,0.1);color:var(--blue);border:0.5px solid rgba(111,163,200,0.2)}
+.lbl-unreal{background:rgba(196,106,90,0.12);color:var(--red);border:0.5px solid rgba(196,106,90,0.25)}
+.lbl-arch{background:rgba(155,132,196,0.1);color:var(--purple);border:0.5px solid rgba(155,132,196,0.2)}
+.banner{background:var(--bg2);border:0.5px solid var(--border2);border-radius:8px;padding:14px 16px;font-size:13px;color:var(--text2);line-height:1.7;margin-bottom:20px}
+.banner strong{color:var(--text);font-weight:500}
+.banner-amber{background:var(--amber-dim);border-color:var(--amber-border)}
+.banner-red{background:var(--red-dim);border-color:rgba(196,106,90,0.25)}
+.section-header{display:flex;align-items:center;gap:10px;margin-bottom:12px;margin-top:24px}
+.section-label{font-family:var(--font-mono);font-size:10px;font-weight:500;letter-spacing:0.12em;text-transform:uppercase;padding:3px 10px;border-radius:99px;white-space:nowrap}
+.lbl-principle{background:var(--purple-dim);color:var(--purple);border:0.5px solid rgba(155,132,196,0.2)}
+.lbl-structure{background:var(--blue-dim);color:var(--blue);border:0.5px solid rgba(111,163,200,0.2)}
+.lbl-avoid{background:var(--red-dim);color:var(--red);border:0.5px solid rgba(196,106,90,0.2)}
+.lbl-ue{background:var(--amber-dim);color:var(--amber);border:0.5px solid var(--amber-border)}
+.section-title{font-size:14px;font-weight:500;color:var(--text)}
+.section-line{flex:1;height:0.5px;background:var(--border)}
+.cards{display:flex;flex-direction:column;gap:7px}
+.card{background:var(--bg2);border:0.5px solid var(--border);border-radius:7px;padding:12px 14px}
+.card-title{font-size:13px;font-weight:500;color:var(--text);margin-bottom:4px}
+.card-sub{font-size:12px;color:var(--text2);line-height:1.65}
+.card-sub code{font-family:var(--font-mono);font-size:11px;background:var(--bg3);border:0.5px solid var(--border2);border-radius:4px;padding:1px 5px;color:var(--amber)}
+.card-bad{border-left:2px solid var(--red)}
+.card-good{border-left:2px solid var(--green)}
+.card-info{border-left:2px solid var(--blue)}
+.two-col{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:7px}
+.folder-tree{background:var(--bg2);border:0.5px solid var(--border2);border-radius:8px;padding:16px 18px;font-family:var(--font-mono);font-size:12px;line-height:2;color:var(--text2)}
+.folder{color:var(--text3)}
+.indent1{padding-left:18px}
+.indent2{padding-left:36px}
+.hl-amber{color:var(--amber);font-weight:500}
+.hl-dim{color:var(--text3)}
+</style>
 </head>
 <body>
-  <div class="page" id="app-wrap">
-    
-    <div class="toolbar no-print">
-      <div style="font-family: var(--font-mono); font-size: 11px; color: var(--green);">⬤ LIVE CLOUD SYNC</div>
-      <div style="display: flex; gap: 8px; flex-wrap: wrap;">
-        <button class="btn" id="kanban-btn">🗂️ Kanban View (K)</button>
-        <input type="text" id="search-input" class="search-bar" placeholder="Search tasks ( / )">
-        <button class="btn" id="archive-btn">👁️ Hide Completed</button>
-        <button class="btn" id="theme-btn">☀️ Light Mode</button>
-      </div>
-    </div>
+<div class="page">
 
-    <div class="header">
-      <div class="header-eyebrow">// dev plan v6 — mega update</div>
-      <h1 class="header-title">Oregon Trail<br><span>Game Roadmap</span></h1>
-      <p class="header-sub">Press 'N' to add a task. Press 'K' for Kanban. Syncs instantly across the web.</p>
-    </div>
-
-    <div class="progress-wrap no-print">
-      <div class="progress-row">
-        <span class="progress-label">OVERALL PROGRESS</span>
-        <span class="progress-count" id="prog-text">0 / 0 tasks</span>
-      </div>
-      <div class="progress-track"><div class="progress-fill" id="prog-fill"></div></div>
-    </div>
-
-    <div id="board-layout" class="kanban-container">
-      
-      <div class="phase">
-        <div class="phase-header">
-          <div class="phase-pill pill-1">Phase 1</div>
-          <div class="phase-name">Foundation Tasks</div>
-          <div style="margin-left: auto; font-family: var(--font-mono); font-size: 10px; color: var(--text3);" id="phase-1-prog">0/0</div>
-        </div>
-        
-        <div class="tasks" id="task-list">
-          </div>
-        
-        <div class="add-task-wrap no-print" style="margin-top: 15px; display: flex; gap: 8px;">
-          <input type="text" id="new-task-input" placeholder="Enter new task (Press N)..." style="flex:1; padding:10px; border-radius:6px; background:var(--bg2); border:1px solid var(--border2); color:var(--text); font-family:var(--font-body); outline: none;">
-          <select id="task-priority" style="padding:10px; border-radius:6px; background:var(--bg2); border:1px solid var(--border2); color:var(--text); outline: none;">
-            <option value="low">Low Priority</option>
-            <option value="med">Med Priority</option>
-            <option value="high">High Priority</option>
-          </select>
-          <button id="add-task-btn" class="add-task-btn" style="width:auto; padding:0 20px; background:var(--green-dim); color:var(--green); border: 1px solid var(--green-border); border-radius: 6px; cursor: pointer; font-family: var(--font-mono); font-size: 11px; text-transform: uppercase;">+ Add</button>
-        </div>
-      </div>
-      
-    </div>
+  <div class="header">
+    <div class="header-eyebrow">// dev plan v2</div>
+    <h1 class="header-title">Oregon Trail<br><span>Game Roadmap</span></h1>
+    <p class="header-sub">Technical safety net — not a creative script. The systems are required. How you build them is yours.</p>
   </div>
 
-  <script type="module" src="app.js"></script>
+  <!-- Toolbar: Add task + search + controls -->
+  <div class="toolbar">
+    <input type="text" id="new-task-input" placeholder="Add a task… (or press N)" />
+    <select id="task-priority">
+      <option value="high">High</option>
+      <option value="med" selected>Med</option>
+      <option value="low">Low</option>
+    </select>
+    <button class="toolbar-btn add" id="add-task-btn">+ Add</button>
+    <div class="search-wrap">
+      <input type="text" id="search-input" placeholder="Search… (or press /)" />
+    </div>
+    <button class="toolbar-btn" id="archive-btn">👁️ Hide Completed</button>
+    <button class="toolbar-btn" id="kanban-btn">⊞ Kanban</button>
+    <button class="toolbar-btn" id="theme-btn">☀️ Light Mode</button>
+  </div>
+
+  <!-- Progress bar -->
+  <div class="progress-wrap">
+    <div class="progress-row">
+      <span class="progress-label">OVERALL PROGRESS</span>
+      <span class="progress-count" id="prog-text">Loading…</span>
+    </div>
+    <!-- phase-1-prog is referenced in app.js -->
+    <div style="display:none" id="phase-1-prog"></div>
+    <div class="progress-track"><div class="progress-fill" id="prog-fill"></div></div>
+  </div>
+
+  <!-- Dynamic task list rendered by app.js -->
+  <div id="task-list">
+    <div class="loading">Loading tasks from Firebase…</div>
+  </div>
+
+  <!-- ─── Static reference content below ─── -->
+
+  <div class="section-divider">
+    <div class="section-divider-line"></div>
+    <div class="section-divider-label lbl-arch">Unity architecture rules</div>
+    <div class="section-divider-line"></div>
+  </div>
+
+  <div class="banner"><strong>The golden rule:</strong> never let two systems talk directly. Everything goes through the EventBus or a manager. This is what makes multiplayer survivable when you add it later.</div>
+
+  <div class="section-header"><div class="section-label lbl-structure">Folder structure</div><div class="section-line"></div></div>
+  <div class="folder-tree">
+    <div>Assets/</div>
+    <div class="indent1 folder">_Scripts/</div>
+    <div class="indent2 hl-amber">Core/         ← GameManager, EventBus, SceneLoader</div>
+    <div class="indent2 hl-amber">Player/       ← PlayerController, PlayerInput</div>
+    <div class="indent2 hl-amber">Wagon/        ← WagonController, WagonHealth</div>
+    <div class="indent2 hl-amber">Systems/      ← SupplySystem, PartySystem, WeatherSystem</div>
+    <div class="indent2 hl-amber">Events/       ← RandomEventSystem, EventData (SO)</div>
+    <div class="indent2 hl-amber">UI/           ← HUDController, EventUIPanel, MenuManager</div>
+    <div class="indent2 hl-dim">Multiplayer/  ← empty for now</div>
+    <div class="indent1 folder">_ScriptableObjects/ &nbsp; _Prefabs/ &nbsp; _Scenes/</div>
+  </div>
+
+  <div class="section-header"><div class="section-label lbl-principle">Principle 1</div><div class="section-title">EventBus — never direct references between systems</div><div class="section-line"></div></div>
+  <div class="two-col">
+    <div class="card card-bad"><div class="card-title">Bad</div><div class="card-sub"><code>SupplySystem.instance.food -= 10</code> called from inside <code>WagonController</code>.</div></div>
+    <div class="card card-good"><div class="card-title">Good</div><div class="card-sub"><code>EventBus.Publish(new SupplyEvent(-10, "food"))</code>. Later a <code>NetworkSupplySync</code> just subscribes. Zero refactoring.</div></div>
+  </div>
+
+  <div class="section-header"><div class="section-label lbl-principle">Principle 2</div><div class="section-title">Managers own state — components own behaviour</div><div class="section-line"></div></div>
+  <div class="cards">
+    <div class="card"><div class="card-title">SupplySystem</div><div class="card-sub">Owns all resource values via <code>ModifySupply()</code>. Never touches UI. Later values become <code>NetworkVariable&lt;float&gt;</code>.</div></div>
+    <div class="card"><div class="card-title">WagonController</div><div class="card-sub">Owns movement only. Reads from <code>PlayerInput</code>, never <code>Input.GetKey()</code>. Later you add <code>NetworkTransform</code> and it works.</div></div>
+    <div class="card"><div class="card-title">PartySystem</div><div class="card-sub">Plain C# classes, no MonoBehaviours. Later becomes a synced list without structural changes.</div></div>
+  </div>
+
+  <div class="section-header"><div class="section-label lbl-avoid">Avoid</div><div class="section-title">Things that will hurt you later</div><div class="section-line"></div></div>
+  <div class="cards">
+    <div class="card card-bad"><div class="card-title">Input.GetKey() anywhere</div><div class="card-sub">Remote players don't have a keyboard. Use Unity's <code>PlayerInput</code> + Input Actions from day one.</div></div>
+    <div class="card card-bad"><div class="card-title">Game logic in UI scripts</div><div class="card-sub">UI reads state, never owns it. If your HUD is calculating supply drain you'll regret it.</div></div>
+    <div class="card card-bad"><div class="card-title">FindObjectOfType&lt;T&gt;() at runtime</div><div class="card-sub">Use <code>GameManager.Instance.SupplySystem</code> as your service locator instead.</div></div>
+  </div>
+
+  <div class="section-divider">
+    <div class="section-divider-line"></div>
+    <div class="section-divider-label lbl-arch">Unreal architecture rules</div>
+    <div class="section-divider-line"></div>
+  </div>
+
+  <div class="banner banner-red"><strong>Unity → Unreal mental model:</strong> everything has a direct equivalent, just different names. Learn the mapping before you start.</div>
+
+  <div class="section-header"><div class="section-label lbl-ue">Concept map</div><div class="section-title">Unity → Unreal equivalents</div><div class="section-line"></div></div>
+  <div class="cards">
+    <div class="card card-info"><div class="card-title">GameManager singleton → Game Instance</div><div class="card-sub">Set your Blueprint Game Instance in Project Settings. Accessible anywhere via <code>Get Game Instance → Cast</code>. Persists across level loads automatically.</div></div>
+    <div class="card card-info"><div class="card-title">ScriptableObject → Data Asset</div><div class="card-sub">Blueprint class inheriting from Data Asset. Define fields, edit instances in the content browser. Identical workflow.</div></div>
+    <div class="card card-info"><div class="card-title">EventBus → Event Dispatcher</div><div class="card-sub">Defined on the broadcasting Blueprint. Others bind on BeginPlay. Broadcast fires all listeners. Same pattern, different syntax.</div></div>
+    <div class="card card-info"><div class="card-title">Cinemachine → Spring Arm + Camera</div><div class="card-sub">Spring Arm handles follow cameras with lag and collision. Sequencer handles cutscenes. Both Blueprint-native, no plugins needed.</div></div>
+    <div class="card card-info"><div class="card-title">NGO replication → Blueprint replication</div><div class="card-sub">No library. Check Replicated on Blueprint variables. Use Server / Multicast / Client event types. UE handles the rest.</div></div>
+  </div>
+
+  <div class="section-header"><div class="section-label lbl-avoid">Avoid</div><div class="section-title">Unreal-specific traps</div><div class="section-line"></div></div>
+  <div class="cards">
+    <div class="card card-bad"><div class="card-title">Baked lighting</div><div class="card-sub">You're using Lumen — it's fully dynamic. Baking breaks the whole point and makes iteration painfully slow.</div></div>
+    <div class="card card-bad"><div class="card-title">Storing runtime state in Data Assets</div><div class="card-sub">Data Assets are config, not state. Mutable values like current food live in the Game Instance, not the asset.</div></div>
+    <div class="card card-bad"><div class="card-title">Get Player Controller for game logic</div><div class="card-sub">In multiplayer it's server-relative and unreliable on clients. Use Game State and Game Instance instead.</div></div>
+    <div class="card card-good"><div class="card-title">Blueprint is totally fine</div><div class="card-sub">Blueprint handles everything in this game. Same separation rules as Unity — state in managers, behaviour in components, communication through dispatchers.</div></div>
+  </div>
+
+</div>
+
+<!-- app.js loaded as ES module -->
+<script type="module" src="app.js"></script>
 </body>
 </html>
