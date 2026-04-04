@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Oregon Trail — V4 Live</title>
+  <link rel="stylesheet" href="style.css">
+  <script src="https://cdn.jsdelivr.net/npm/sortablejs@latest/Sortable.min.js"></script>
+</head>
+<body>
+  <div class="page" id="app-wrap">
+    
+    <div class="toolbar" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+      <div style="font-family: var(--font-mono); font-size: 11px; color: var(--green);">⬤ LIVE CLOUD SYNC</div>
+      <button class="btn" id="theme-btn" style="background: transparent; border: 1px solid var(--border2); color: var(--text2); padding: 6px 12px; border-radius: 6px; cursor: pointer; font-family: var(--font-mono); font-size: 11px; text-transform: uppercase;">☀️ Light Mode</button>
+    </div>
+
+    <div class="header">
+      <h1 class="header-title">Oregon Trail<br><span>Game Roadmap</span></h1>
+      <p class="header-sub">Drag and drop to reorder. Syncs instantly across the web.</p>
+    </div>
+
+    <div class="progress-wrap">
+      <div class="progress-row">
+        <span class="progress-label">OVERALL PROGRESS</span>
+        <span class="progress-count" id="prog-text">0 / 0 tasks</span>
+      </div>
+      <div class="progress-track"><div class="progress-fill" id="prog-fill"></div></div>
+    </div>
+
+    <div class="phase">
+      <div class="phase-header">
+        <div class="phase-pill pill-1">Phase 1</div>
+        <div class="phase-name">Foundation Tasks</div>
+        <div class="phase-line"></div>
+      </div>
+      
+      <div class="tasks" id="task-list">
+        </div>
+      
+      <div class="add-task-wrap" style="margin-top: 15px; display: flex; gap: 8px;">
+        <input type="text" id="new-task-input" placeholder="Enter new task..." style="flex:1; padding:10px; border-radius:6px; background:var(--bg2); border:1px solid var(--border2); color:var(--text); font-family:var(--font-body); outline: none;">
+        <select id="task-priority" style="padding:10px; border-radius:6px; background:var(--bg2); border:1px solid var(--border2); color:var(--text); outline: none;">
+          <option value="low">Low Priority</option>
+          <option value="med">Med Priority</option>
+          <option value="high">High Priority</option>
+        </select>
+        <button id="add-task-btn" class="add-task-btn" style="width:auto; padding:0 20px; background:var(--green-dim); color:var(--green); border: 1px solid var(--green-border); border-radius: 6px; cursor: pointer; font-family: var(--font-mono); font-size: 11px; text-transform: uppercase;">+ Add</button>
+      </div>
+    </div>
+  </div>
+
+  <script type="module" src="app.js"></script>
+</body>
+</html>
