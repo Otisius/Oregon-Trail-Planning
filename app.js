@@ -12,7 +12,7 @@ const firebaseConfig = {
 };
 
 const app = initializeApp(firebaseConfig);
-const db = getFirestore(app, 'char');
+const db = getFirestore(app);
 
 const tasksCollection = collection(db, 'tasks');
 const q = query(tasksCollection, orderBy("order", "asc"));
