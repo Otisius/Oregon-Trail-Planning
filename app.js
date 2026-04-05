@@ -358,22 +358,26 @@ function updateStats(total, done) {
 function updatePhaseProgress(phaseCount) {
   // Update phase labels
   const phases = { unity: 'unity', unreal: 'unreal', general: 'general' };
-  Object.entries(phases).forEach(([phase, key]) => {
+  Object.entries(phases).forEach(([phase]) => {
     const el = $(phase + '-prog');
     if (el) {
-      const [total, done] = phaseCount[key] || [0,0];
+      const [total, done] = phaseCount[phase] || [0,0];
       el.textContent = `${done}/${total}`;
     }
   });
 
-  // Mini bars
+  // Mini bars — each with label + track
+  const labels = { unity:'Unity', unreal:'Unreal', general:'General' };
   phaseMiniBar.innerHTML = Object.entries(phaseCount).map(([phase, [total, done]]) => {
     const pct = total > 0 ? Math.round((done/total)*100) : 0;
-    const labels = { unity:'Unity', unreal:'Unreal', general:'General' };
     return `<div class="phase-mini mini-${phase}">
-      <span>${labels[phase]}</span>
-      <div class="phase-mini-track"><div class="phase-mini-fill" style="width:${pct}%"></div></div>
-      <span>${pct}%</span>
+      <div class="phase-mini-header">
+        <span>${labels[phase]}</span>
+        <span>${done}/${total}</span>
+      </div>
+      <div class="phase-mini-track">
+        <div class="phase-mini-fill" style="width:${pct}%"></div>
+      </div>
     </div>`;
   }).join('');
 }
