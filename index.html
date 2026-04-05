@@ -3,198 +3,219 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="Oregon Trail Game Dev Roadmap — A structured planning tool for your Unity and Unreal Engine game.">
 <title>Oregon Trail — Dev Roadmap</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;1,400&family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@300;400;500&display=swap" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Sortable/1.15.2/Sortable.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.2/dist/confetti.browser.min.js"></script>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600&family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@300;400;500&display=swap" rel="stylesheet">
-<style>
-*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-:root{
-  --bg:#0f0e0c;--bg2:#161511;--bg3:#1e1c17;
-  --border:rgba(255,255,255,0.07);--border2:rgba(255,255,255,0.12);
-  --text:#e8e2d6;--text2:#a89f8e;--text3:#6b6358;
-  --amber:#d4903a;--amber-dim:rgba(212,144,58,0.12);--amber-border:rgba(212,144,58,0.3);
-  --green:#7aad6e;--green-dim:rgba(122,173,110,0.1);--green-border:rgba(122,173,110,0.3);
-  --blue:#6fa3c8;--blue-dim:rgba(111,163,200,0.1);--blue-border:rgba(111,163,200,0.25);
-  --red:#c46a5a;--red-dim:rgba(196,106,90,0.1);--red-border:rgba(196,106,90,0.25);
-  --purple:#9b84c4;--purple-dim:rgba(155,132,196,0.1);
-  --teal:#5aada0;--teal-dim:rgba(90,173,160,0.1);
-  --font-display:'Playfair Display',Georgia,serif;
-  --font-body:'IBM Plex Sans',sans-serif;
-  --font-mono:'IBM Plex Mono',monospace;
-}
-body[data-theme="light"]{
-  --bg:#f5f0e8;--bg2:#ede8de;--bg3:#e2dbd0;
-  --border:rgba(0,0,0,0.07);--border2:rgba(0,0,0,0.13);
-  --text:#1a1814;--text2:#5c5248;--text3:#9a9088;
-}
-body{background:var(--bg);color:var(--text);font-family:var(--font-body);font-size:14px;line-height:1.6;min-height:100vh}
-body::before{content:'';position:fixed;inset:0;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");pointer-events:none;z-index:0;opacity:0.6}
-.page{position:relative;z-index:1;max-width:780px;margin:0 auto;padding:52px 24px 100px}
-.header{margin-bottom:44px}
-.header-eyebrow{font-family:var(--font-mono);font-size:11px;color:var(--amber);letter-spacing:0.15em;text-transform:uppercase;margin-bottom:10px}
-.header-title{font-family:var(--font-display);font-size:clamp(30px,5vw,44px);font-weight:600;color:var(--text);line-height:1.15;margin-bottom:12px}
-.header-title span{color:var(--amber)}
-.header-sub{font-size:13px;color:var(--text2);max-width:500px;line-height:1.75}
-.toolbar{display:flex;flex-wrap:wrap;gap:7px;margin-bottom:8px;align-items:center}
-.toolbar input[type="text"]{flex:1;min-width:150px;background:var(--bg2);border:0.5px solid var(--border2);border-radius:6px;padding:8px 12px;color:var(--text);font-family:var(--font-body);font-size:13px;outline:none;transition:border-color .15s}
-.toolbar input::placeholder{color:var(--text3)}
-.toolbar input:focus{border-color:var(--amber)}
-.toolbar select{background:var(--bg2);border:0.5px solid var(--border2);border-radius:6px;padding:8px 10px;color:var(--text2);font-family:var(--font-mono);font-size:11px;outline:none;cursor:pointer}
-.tbtn{background:var(--bg2);border:0.5px solid var(--border2);border-radius:6px;padding:8px 13px;color:var(--text2);font-family:var(--font-mono);font-size:11px;cursor:pointer;white-space:nowrap;transition:border-color .15s,color .15s;letter-spacing:0.04em}
-.tbtn:hover{border-color:var(--amber);color:var(--amber)}
-.tbtn.primary{background:var(--amber-dim);border-color:var(--amber-border);color:var(--amber)}
-.search-row{display:flex;gap:7px;width:100%;margin-bottom:14px}
-.search-row input{flex:1;background:var(--bg2);border:0.5px solid var(--border2);border-radius:6px;padding:8px 12px;color:var(--text);font-family:var(--font-body);font-size:13px;outline:none;transition:border-color .15s}
-.search-row input::placeholder{color:var(--text3)}
-.search-row input:focus{border-color:var(--amber)}
-.progress-wrap{margin-bottom:36px;padding:16px 18px;background:var(--bg2);border:0.5px solid var(--border2);border-radius:8px}
-.progress-row{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px}
-.progress-label{font-family:var(--font-mono);font-size:11px;color:var(--text3);letter-spacing:0.08em}
-.progress-count{font-family:var(--font-mono);font-size:11px;color:var(--amber)}
-.progress-track{height:3px;background:var(--bg3);border-radius:99px;overflow:hidden}
-.progress-fill{height:100%;background:linear-gradient(90deg,var(--amber),#e8b86d);border-radius:99px;transition:width .4s cubic-bezier(.4,0,.2,1);width:0%}
-#task-list{display:flex;flex-direction:column;gap:5px;margin-bottom:44px;min-height:40px}
-#phase-1-prog{display:none}
-.task{display:flex;align-items:flex-start;gap:12px;background:var(--bg2);border:0.5px solid var(--border);border-radius:7px;padding:12px 14px;cursor:pointer;transition:border-color .15s,background .15s,opacity .2s;user-select:none}
-.task:hover{border-color:var(--border2);background:var(--bg3)}
-.task.done{background:var(--bg);border-color:var(--border);opacity:.65}
-.task.done .task-title{text-decoration:line-through;color:var(--text3)}
-.task.done .task-desc{color:var(--text3)}
-.task.hidden{display:none !important}
-.task-check{width:17px;height:17px;min-width:17px;border-radius:50%;border:1px solid var(--text3);display:flex;align-items:center;justify-content:center;margin-top:1px;flex-shrink:0;transition:background .15s,border-color .15s}
-.task.done .task-check{background:var(--green-dim);border-color:var(--green)}
-.checkmark{width:7px;height:7px;border-right:1.5px solid var(--green);border-bottom:1.5px solid var(--green);transform:rotate(45deg) translate(-1px,-1px);display:none}
-.task.done .checkmark{display:block}
-.task-body{flex:1;min-width:0}
-.task-title{font-size:13px;font-weight:500;color:var(--text);margin-bottom:2px}
-.task-desc{font-size:12px;color:var(--text2);line-height:1.6;margin-bottom:4px}
-.task-tag{font-family:var(--font-mono);font-size:10px;padding:2px 8px;border-radius:4px;display:inline-block;letter-spacing:.05em;margin-top:2px}
-.tag-setup{background:var(--blue-dim);color:var(--blue)}
-.tag-code{background:var(--amber-dim);color:var(--amber)}
-.tag-system{background:var(--red-dim);color:var(--red)}
-.tag-art{background:var(--teal-dim);color:var(--teal)}
-.tag-polish{background:var(--purple-dim);color:var(--purple)}
-.tag-world{background:var(--green-dim);color:var(--green)}
-.task-delete{font-size:12px;color:var(--text3);padding:2px 5px;border-radius:4px;transition:color .15s;margin-left:2px;flex-shrink:0;opacity:0}
-.task:hover .task-delete{opacity:1}
-.task-delete:hover{color:var(--red)}
-.sortable-ghost{opacity:.35}
-.section-divider{display:flex;align-items:center;gap:14px;margin:52px 0 28px}
-.sdline{flex:1;height:.5px;background:var(--border)}
-.sdlabel{font-family:var(--font-mono);font-size:10px;letter-spacing:.15em;text-transform:uppercase;padding:4px 12px;border-radius:99px;white-space:nowrap}
-.sdl-unity{background:var(--blue-dim);color:var(--blue);border:.5px solid var(--blue-border)}
-.sdl-unreal{background:var(--red-dim);color:var(--red);border:.5px solid var(--red-border)}
-.sdl-arch{background:var(--purple-dim);color:var(--purple);border:.5px solid rgba(155,132,196,0.25)}
-.guide-intro{background:var(--amber-dim);border:.5px solid var(--amber-border);border-radius:8px;padding:16px 18px;font-size:13px;color:var(--text2);line-height:1.75;margin-bottom:20px}
-.guide-intro strong{color:var(--amber)}
-.rule-block{margin-bottom:14px;background:var(--bg2);border:.5px solid var(--border);border-radius:8px;overflow:hidden}
-.rule-header{padding:12px 16px;border-bottom:.5px solid var(--border);display:flex;align-items:center;gap:10px}
-.rule-num{font-family:var(--font-mono);font-size:10px;background:var(--amber-dim);color:var(--amber);border:.5px solid var(--amber-border);border-radius:99px;padding:2px 9px;letter-spacing:.08em;white-space:nowrap}
-.rule-title{font-size:13px;font-weight:500;color:var(--text)}
-.rule-body{padding:14px 16px;font-size:13px;color:var(--text2);line-height:1.75}
-.rule-body p{margin-bottom:10px}
-.rule-body p:last-child{margin-bottom:0}
-.rule-body strong{color:var(--text);font-weight:500}
-.rule-body code{font-family:var(--font-mono);font-size:11px;background:var(--bg3);border:.5px solid var(--border2);border-radius:4px;padding:1px 6px;color:var(--amber)}
-.eg-row{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:12px}
-.eg{padding:10px 12px;border-radius:6px;font-size:12px;line-height:1.6;color:var(--text2)}
-.eg-bad{background:var(--red-dim);border:.5px solid var(--red-border)}
-.eg-bad::before{content:'✕  Bad  ';color:var(--red);font-weight:600;font-family:var(--font-mono);font-size:10px;display:block;margin-bottom:4px;letter-spacing:.06em}
-.eg-good{background:var(--green-dim);border:.5px solid var(--green-border)}
-.eg-good::before{content:'✓  Good  ';color:var(--green);font-weight:600;font-family:var(--font-mono);font-size:10px;display:block;margin-bottom:4px;letter-spacing:.06em}
-.trap-list{display:flex;flex-direction:column;gap:6px;margin-top:10px}
-.trap{padding:11px 13px;border-radius:6px;font-size:12px;line-height:1.65;background:var(--bg3);border-left:2px solid var(--red);color:var(--text2)}
-.trap strong{color:var(--text);font-weight:500;display:block;margin-bottom:3px}
-.trap.ok{border-left-color:var(--green)}
-.trap.ok strong{color:var(--green)}
-.concept-table{display:flex;flex-direction:column;gap:6px;margin-top:12px}
-.concept-row{background:var(--bg3);border-radius:6px;overflow:hidden}
-.concept-names{display:grid;grid-template-columns:1fr auto 1fr;align-items:center;gap:8px;padding:9px 12px}
-.cn-unity{font-family:var(--font-mono);color:var(--blue);font-size:11px}
-.cn-arrow{color:var(--text3)}
-.cn-ue{font-family:var(--font-mono);color:var(--red);font-size:11px}
-.concept-desc{font-size:12px;color:var(--text2);padding:0 12px 10px;line-height:1.6;border-top:.5px solid var(--border)}
-.concept-desc code{font-family:var(--font-mono);font-size:11px;background:var(--bg2);border:.5px solid var(--border2);border-radius:4px;padding:1px 5px;color:var(--amber)}
-.folder-tree{background:var(--bg3);border-radius:6px;padding:14px 16px;font-family:var(--font-mono);font-size:12px;line-height:2;color:var(--text2);margin-top:12px}
-.fi{color:var(--text3)}
-.i1{padding-left:18px}
-.i2{padding-left:36px}
-.ha{color:var(--amber)}
-.hd{color:var(--text3)}
-@media(max-width:520px){.eg-row{grid-template-columns:1fr}.concept-names{font-size:10px}}
-</style>
+<link rel="stylesheet" href="style.css">
 </head>
 <body>
+
+<!-- TOAST SYSTEM -->
+<div id="toast-container" aria-live="polite" aria-atomic="true"></div>
+
+<!-- KEYBOARD SHORTCUT OVERLAY -->
+<div id="shortcut-overlay" class="overlay hidden" role="dialog" aria-modal="true" aria-label="Keyboard Shortcuts">
+  <div class="overlay-backdrop" id="shortcut-backdrop"></div>
+  <div class="overlay-panel shortcut-panel">
+    <div class="overlay-header">
+      <span class="overlay-title">Keyboard Shortcuts</span>
+      <button class="overlay-close" id="shortcut-close-btn" aria-label="Close">✕</button>
+    </div>
+    <div class="shortcut-grid">
+      <div class="shortcut-row"><kbd>N</kbd><span>Focus new task input</span></div>
+      <div class="shortcut-row"><kbd>/</kbd><span>Focus search</span></div>
+      <div class="shortcut-row"><kbd>K</kbd><span>Toggle Kanban</span></div>
+      <div class="shortcut-row"><kbd>T</kbd><span>Toggle theme</span></div>
+      <div class="shortcut-row"><kbd>H</kbd><span>Hide/show completed</span></div>
+      <div class="shortcut-row"><kbd>?</kbd><span>This help panel</span></div>
+      <div class="shortcut-row"><kbd>Esc</kbd><span>Close panels / clear search</span></div>
+    </div>
+  </div>
+</div>
+
+<!-- TASK DETAIL / EDIT MODAL -->
+<div id="detail-overlay" class="overlay hidden" role="dialog" aria-modal="true">
+  <div class="overlay-backdrop" id="detail-backdrop"></div>
+  <div class="overlay-panel detail-panel">
+    <div class="overlay-header">
+      <span class="overlay-title">Edit Task</span>
+      <button class="overlay-close" id="detail-close-btn" aria-label="Close">✕</button>
+    </div>
+    <div class="detail-body">
+      <label class="detail-label" for="detail-input-title">Title</label>
+      <input type="text" class="detail-input" id="detail-input-title" placeholder="Task title…">
+      <label class="detail-label" for="detail-input-desc">Notes</label>
+      <textarea class="detail-textarea" id="detail-input-desc" placeholder="Add notes, links, context…" rows="5"></textarea>
+      <label class="detail-label">Priority</label>
+      <div class="priority-pills" id="detail-priority-pills">
+        <button class="ppill" data-val="high">🔴 High</button>
+        <button class="ppill" data-val="med">🟡 Med</button>
+        <button class="ppill" data-val="low">🟢 Low</button>
+      </div>
+      <label class="detail-label" for="detail-phase">Phase</label>
+      <select class="detail-select" id="detail-phase">
+        <option value="unity">Unity — Phase 1</option>
+        <option value="unreal">Unreal Engine — Phase 2</option>
+        <option value="general">General</option>
+      </select>
+      <div class="detail-meta" id="detail-meta"></div>
+      <div class="detail-actions">
+        <button class="btn-save" id="detail-save-btn">Save Changes</button>
+        <button class="btn-danger" id="detail-delete-btn">Delete Task</button>
+      </div>
+    </div>
+  </div>
+</div>
+
 <div class="page">
 
+<!-- HEADER -->
 <div class="header">
-  <div class="header-eyebrow">// dev plan v2</div>
+  <div class="header-eyebrow">// dev plan v3</div>
   <h1 class="header-title">Oregon Trail<br><span>Game Roadmap</span></h1>
   <p class="header-sub">A technical checklist for building your game right. The systems listed are required — how you design them is completely up to you.</p>
+
+  <!-- STATS STRIP -->
+  <div class="stats-strip">
+    <div class="stat-item"><span class="stat-num" id="stat-total">—</span><span class="stat-label">Total</span></div>
+    <div class="stat-sep"></div>
+    <div class="stat-item"><span class="stat-num" id="stat-done">—</span><span class="stat-label">Done</span></div>
+    <div class="stat-sep"></div>
+    <div class="stat-item"><span class="stat-num" id="stat-remaining">—</span><span class="stat-label">Left</span></div>
+    <div class="stat-sep"></div>
+    <div class="stat-item"><span class="stat-num" id="stat-streak">—</span><span class="stat-label">Day Streak 🔥</span></div>
+  </div>
 </div>
 
-<div class="toolbar">
-  <input type="text" id="new-task-input" placeholder="New task title… (press N)" />
-  <select id="task-priority"><option value="high">High</option><option value="med" selected>Med</option><option value="low">Low</option></select>
-  <button class="tbtn primary" id="add-task-btn">+ Add</button>
-  <button class="tbtn" id="archive-btn">👁️ Hide Completed</button>
-  <button class="tbtn" id="kanban-btn">⊞ Kanban</button>
-  <button class="tbtn" id="theme-btn">☀️ Light Mode</button>
-</div>
-<div class="search-row">
-  <input type="text" id="search-input" placeholder="Search tasks… (press /)" />
-</div>
-
-<div class="progress-wrap">
+<!-- STICKY PROGRESS -->
+<div class="progress-wrap" id="progress-wrap">
   <div class="progress-row">
     <span class="progress-label">OVERALL PROGRESS</span>
     <span class="progress-count" id="prog-text">Loading…</span>
   </div>
-  <div id="phase-1-prog"></div>
   <div class="progress-track"><div class="progress-fill" id="prog-fill"></div></div>
+  <div class="phase-mini-bars" id="phase-mini-bars"></div>
 </div>
 
-<div id="task-list">
-  <div style="text-align:center;padding:32px;font-family:var(--font-mono);font-size:12px;color:var(--text3)">Connecting to Firebase…</div>
+<!-- OFFLINE BANNER -->
+<div class="offline-banner hidden" id="offline-banner">⚠ You're offline — changes are saved locally and will sync when you reconnect.</div>
+
+<!-- TOOLBAR -->
+<div class="toolbar">
+  <div class="toolbar-left">
+    <input type="text" id="new-task-input" placeholder="New task… (press N)" autocomplete="off" />
+    <select id="task-priority" title="Priority">
+      <option value="high">🔴 High</option>
+      <option value="med" selected>🟡 Med</option>
+      <option value="low">🟢 Low</option>
+    </select>
+    <select id="task-phase" title="Phase">
+      <option value="unity">Unity</option>
+      <option value="unreal">Unreal</option>
+      <option value="general">General</option>
+    </select>
+    <button class="tbtn primary" id="add-task-btn">+ Add</button>
+  </div>
+  <div class="toolbar-right">
+    <select id="filter-priority" class="tbtn-select" title="Filter by priority">
+      <option value="all">All Priorities</option>
+      <option value="high">High Only</option>
+      <option value="med">Med Only</option>
+      <option value="low">Low Only</option>
+    </select>
+    <select id="filter-phase-select" class="tbtn-select" title="Filter by phase">
+      <option value="all">All Phases</option>
+      <option value="unity">Unity</option>
+      <option value="unreal">Unreal</option>
+      <option value="general">General</option>
+    </select>
+    <button class="tbtn" id="archive-btn" title="H">👁 Hide Done</button>
+    <button class="tbtn" id="kanban-btn" title="K">⊞ Kanban</button>
+    <button class="tbtn" id="export-btn" title="Export tasks">⬇ Export</button>
+    <button class="tbtn" id="import-btn" title="Import tasks">⬆ Import</button>
+    <input type="file" id="import-file" accept=".json" style="display:none" />
+    <button class="tbtn" id="theme-btn" title="T">☀️ Light</button>
+    <button class="tbtn" id="shortcut-btn" title="?">? Help</button>
+  </div>
 </div>
 
-<!-- ════════════════════════
-     UNITY GUIDE
-     ════════════════════════ -->
-<div class="section-divider">
-  <div class="sdline"></div>
-  <div class="sdlabel sdl-arch">Unity — how to build it right</div>
-  <div class="sdline"></div>
+<!-- SEARCH + SORT -->
+<div class="search-row">
+  <div class="search-wrap">
+    <span class="search-icon">⌕</span>
+    <input type="text" id="search-input" placeholder="Search tasks… (press /)" autocomplete="off" />
+    <button class="search-clear hidden" id="search-clear" aria-label="Clear search">✕</button>
+  </div>
+  <select id="sort-select" class="tbtn-select">
+    <option value="order">Custom Order</option>
+    <option value="priority">By Priority</option>
+    <option value="alpha">Alphabetical</option>
+    <option value="recent">Recently Added</option>
+  </select>
 </div>
 
-<div class="guide-intro">
-  <strong>New to all this?</strong> These aren't rules you need to memorize right now. They're habits that prevent you from having to rewrite your whole game later when you add multiplayer. Read through once, then come back when something breaks.
+<!-- KANBAN / LIST CONTAINER -->
+<div class="kanban-container" id="kanban-container">
+  <div class="phase" id="phase-unity" data-phase="unity">
+    <div class="phase-header">
+      <span class="phase-pill pill-unity">Phase 1</span>
+      <span class="phase-name">Unity — Ship v1</span>
+      <span class="phase-line"></span>
+      <span class="phase-prog-label" id="unity-prog">0/0</span>
+    </div>
+    <div class="tasks" id="task-list-unity"></div>
+  </div>
+
+  <div class="phase" id="phase-unreal" data-phase="unreal">
+    <div class="phase-header">
+      <span class="phase-pill pill-unreal">Phase 2</span>
+      <span class="phase-name">Unreal Engine — v2</span>
+      <span class="phase-line"></span>
+      <span class="phase-prog-label" id="unreal-prog">0/0</span>
+    </div>
+    <div class="tasks" id="task-list-unreal"></div>
+  </div>
+
+  <div class="phase" id="phase-general" data-phase="general">
+    <div class="phase-header">
+      <span class="phase-pill pill-general">General</span>
+      <span class="phase-name">Other Tasks</span>
+      <span class="phase-line"></span>
+      <span class="phase-prog-label" id="general-prog">0/0</span>
+    </div>
+    <div class="tasks" id="task-list-general"></div>
+  </div>
 </div>
+
+<div class="empty-state hidden" id="empty-state">
+  <div class="empty-icon">◌</div>
+  <div class="empty-title">No tasks found</div>
+  <div class="empty-sub">Try a different search or filter, or add a new task above.</div>
+</div>
+
+<!-- GUIDE SECTIONS -->
+<div class="section-divider"><div class="sdline"></div><div class="sdlabel sdl-arch">Unity — how to build it right</div><div class="sdline"></div></div>
+
+<div class="guide-intro"><strong>New to all this?</strong> These aren't rules you need to memorize right now. They're habits that prevent you from having to rewrite your whole game later when you add multiplayer. Read through once, then come back when something breaks.</div>
 
 <div class="rule-block">
   <div class="rule-header"><span class="rule-num">RULE 1</span><span class="rule-title">Use the new Input System — not Input.GetKey()</span></div>
   <div class="rule-body">
     <p>The old way to read keyboard input looks like <code>if (Input.GetKey(KeyCode.W)) Move();</code> — it works, but it's glued to <em>your</em> physical keyboard. When you add multiplayer, other players aren't pressing your keyboard. They send inputs over the network, and your code won't understand that at all.</p>
     <p><strong>The fix:</strong> Install Unity's Input System package and set up Input Actions. Your movement code reads from an action (<code>moveAction.ReadValue&lt;Vector2&gt;()</code>) instead of a key. That same code works for local players, network players, gamepads, and mobile — no changes needed.</p>
-    <div class="eg-row">
-      <div class="eg eg-bad"><code>if (Input.GetKey(KeyCode.W)) Move();</code><br>Breaks completely in multiplayer.</div>
-      <div class="eg eg-good"><code>var dir = moveAction.ReadValue&lt;Vector2&gt;();</code><br>Works for local, remote, gamepad, everything.</div>
-    </div>
+    <div class="eg-row"><div class="eg eg-bad"><code>if (Input.GetKey(KeyCode.W)) Move();</code><br>Breaks completely in multiplayer.</div><div class="eg eg-good"><code>var dir = moveAction.ReadValue&lt;Vector2&gt;();</code><br>Works for local, remote, gamepad, everything.</div></div>
   </div>
 </div>
 
 <div class="rule-block">
   <div class="rule-header"><span class="rule-num">RULE 2</span><span class="rule-title">Systems don't talk to each other directly — use an EventBus</span></div>
   <div class="rule-body">
-    <p>Imagine your wagon hits a river and the player loses food. The obvious way is to have your <code>WagonController</code> reach into <code>SupplySystem</code> and subtract food directly. Simple, right? The problem: now these two scripts are permanently glued together. You can't change one without risking breaking the other. And when you add multiplayer, you'd need to sync that connection over the network — painful.</p>
+    <p>Imagine your wagon hits a river and the player loses food. The obvious way is to have your <code>WagonController</code> reach into <code>SupplySystem</code> and subtract food directly. Simple, right? The problem: now these two scripts are permanently glued together. You can't change one without risking breaking the other.</p>
     <p><strong>The fix:</strong> Create an EventBus — a middleman all scripts can broadcast to and listen on. Instead of calling SupplySystem directly, your wagon fires an event: <em>"food lost, amount: 10."</em> SupplySystem listens for that event and handles it. They never touch each other.</p>
-    <p><strong>Think of it like a group chat.</strong> Your wagon posts "lost 10 food." Anyone who cares reads it and reacts. Your wagon doesn't need to know who read it — and the listeners don't need to know who posted.</p>
-    <div class="eg-row">
-      <div class="eg eg-bad">WagonController directly calls <code>SupplySystem.instance.food -= 10</code>. Now they're glued together forever.</div>
-      <div class="eg eg-good">WagonController fires <code>EventBus.Publish(new FoodLostEvent(10))</code>. SupplySystem handles it independently.</div>
-    </div>
+    <div class="eg-row"><div class="eg eg-bad">WagonController directly calls <code>SupplySystem.instance.food -= 10</code>. Now they're glued together forever.</div><div class="eg eg-good">WagonController fires <code>EventBus.Publish(new FoodLostEvent(10))</code>. SupplySystem handles it independently.</div></div>
   </div>
 </div>
 
@@ -202,7 +223,7 @@ body::before{content:'';position:fixed;inset:0;background-image:url("data:image/
   <div class="rule-header"><span class="rule-num">RULE 3</span><span class="rule-title">One place owns the data. The UI just reads and displays it.</span></div>
   <div class="rule-body">
     <p>Your HUD shows the food count. It's tempting to store the food value in your HUD script since it's already there. Don't. The HUD should only <em>read</em> from <code>SupplySystem</code> and display what it finds — it should never change anything or keep its own copy of the number.</p>
-    <p><strong>Why:</strong> If food is stored in two places (HUD and SupplySystem), they'll get out of sync. You'll hit bugs where the HUD shows 50 food but the actual value is 0. In multiplayer, you'd have to sync both separately and they'll contradict each other. One source of truth — the manager owns it, everyone else reads it.</p>
+    <p><strong>Why:</strong> If food is stored in two places, they'll get out of sync. In multiplayer, you'd have to sync both separately and they'll contradict each other. One source of truth — the manager owns it, everyone else reads it.</p>
   </div>
 </div>
 
@@ -210,14 +231,13 @@ body::before{content:'';position:fixed;inset:0;background-image:url("data:image/
   <div class="rule-header"><span class="rule-num">RULE 4</span><span class="rule-title">Party members = plain C# classes, not GameObjects</span></div>
   <div class="rule-body">
     <p>Your settlers (party members) are data — names, health, status. They don't need to be GameObjects in a scene with MonoBehaviours attached. Making them plain C# classes means they're just objects in a list — easy to save to disk, easy to serialize, and when multiplayer comes, easy to sync over the network without any refactoring.</p>
-    <p><strong>Think of it like:</strong> a party member is a row in a spreadsheet. You don't need to place a whole Unity scene object in the world just to hold a spreadsheet row.</p>
   </div>
 </div>
 
 <div class="rule-block">
   <div class="rule-header"><span class="rule-num">RULE 5</span><span class="rule-title">Use Cinemachine for cameras</span></div>
   <div class="rule-body">
-    <p>Don't write your own camera follow script. Cinemachine is a free Unity package that handles follow cameras, spring lag, collision avoidance, smooth blending between shots — all out of the box. More importantly, it works correctly with multiplayer without you needing to touch anything. Writing your own camera logic now means rewriting it later.</p>
+    <p>Don't write your own camera follow script. Cinemachine is a free Unity package that handles follow cameras, spring lag, collision avoidance, smooth blending between shots — all out of the box. More importantly, it works correctly with multiplayer without you needing to touch anything.</p>
   </div>
 </div>
 
@@ -240,44 +260,19 @@ body::before{content:'';position:fixed;inset:0;background-image:url("data:image/
   </div>
 </div>
 
-<!-- ════════════════════════
-     UNREAL GUIDE
-     ════════════════════════ -->
-<div class="section-divider">
-  <div class="sdline"></div>
-  <div class="sdlabel sdl-unreal">Unreal Engine — after you ship v1</div>
-  <div class="sdline"></div>
-</div>
+<div class="section-divider"><div class="sdline"></div><div class="sdlabel sdl-unreal">Unreal Engine — after you ship v1</div><div class="sdline"></div></div>
 
-<div class="guide-intro" style="background:var(--red-dim);border-color:var(--red-border)">
-  <strong style="color:var(--red)">When to start this:</strong> After your Unity v1.0 is live on itch.io. By then you'll know exactly what your game is — and you rebuild it in Unreal with Nanite terrain, Lumen lighting, and Chaos physics to make it look incredible.
-</div>
+<div class="guide-intro" style="background:var(--red-dim);border-color:var(--red-border)"><strong style="color:var(--red)">When to start this:</strong> After your Unity v1.0 is live on itch.io. By then you'll know exactly what your game is — and you rebuild it in Unreal with Nanite terrain, Lumen lighting, and Chaos physics to make it look incredible.</div>
 
 <div class="rule-block">
   <div class="rule-header"><span class="rule-num">TRANSLATION</span><span class="rule-title">Everything from Unity has an Unreal equivalent — just different names</span></div>
   <div class="rule-body">
-    <p>You're not starting over. You already know how game systems should be structured from Unity. Unreal uses the same concepts, just with different names. Here's the full translation table:</p>
     <div class="concept-table">
-      <div class="concept-row">
-        <div class="concept-names"><span class="cn-unity">GameManager (Unity)</span><span class="cn-arrow">→</span><span class="cn-ue">Game Instance (UE)</span></div>
-        <div class="concept-desc">Set your Blueprint Game Instance in Project Settings. It persists across level loads and is accessible from anywhere with <code>Get Game Instance → Cast</code>. This is where you put your supply system, party data, etc.</div>
-      </div>
-      <div class="concept-row">
-        <div class="concept-names"><span class="cn-unity">ScriptableObject</span><span class="cn-arrow">→</span><span class="cn-ue">Data Asset</span></div>
-        <div class="concept-desc">A Blueprint class that inherits from Data Asset. Define your fields, then create instances in the content browser. Same workflow as ScriptableObjects — just different buttons.</div>
-      </div>
-      <div class="concept-row">
-        <div class="concept-names"><span class="cn-unity">EventBus</span><span class="cn-arrow">→</span><span class="cn-ue">Event Dispatcher</span></div>
-        <div class="concept-desc">Same pattern — broadcast instead of calling directly. Event Dispatchers are defined on the sending Blueprint. Other Blueprints bind to them on BeginPlay. Same idea, different syntax.</div>
-      </div>
-      <div class="concept-row">
-        <div class="concept-names"><span class="cn-unity">Cinemachine</span><span class="cn-arrow">→</span><span class="cn-ue">Spring Arm + Camera</span></div>
-        <div class="concept-desc">A Spring Arm component handles camera lag and collision automatically. Attach a camera to the end and it just works. Sequencer handles cutscenes. Both are Blueprint-native, no plugins needed.</div>
-      </div>
-      <div class="concept-row">
-        <div class="concept-names"><span class="cn-unity">NGO Multiplayer</span><span class="cn-arrow">→</span><span class="cn-ue">Blueprint Replication</span></div>
-        <div class="concept-desc">No external library needed. Just tick "Replicated" on your Blueprint variables and use Server/Client event types. Unreal's networking is built in and handles the rest.</div>
-      </div>
+      <div class="concept-row"><div class="concept-names"><span class="cn-unity">GameManager (Unity)</span><span class="cn-arrow">→</span><span class="cn-ue">Game Instance (UE)</span></div><div class="concept-desc">Set your Blueprint Game Instance in Project Settings. It persists across level loads and is accessible from anywhere with <code>Get Game Instance → Cast</code>.</div></div>
+      <div class="concept-row"><div class="concept-names"><span class="cn-unity">ScriptableObject</span><span class="cn-arrow">→</span><span class="cn-ue">Data Asset</span></div><div class="concept-desc">A Blueprint class that inherits from Data Asset. Define your fields, then create instances in the content browser. Same workflow as ScriptableObjects — just different buttons.</div></div>
+      <div class="concept-row"><div class="concept-names"><span class="cn-unity">EventBus</span><span class="cn-arrow">→</span><span class="cn-ue">Event Dispatcher</span></div><div class="concept-desc">Same pattern — broadcast instead of calling directly. Event Dispatchers are defined on the sending Blueprint. Other Blueprints bind to them on BeginPlay.</div></div>
+      <div class="concept-row"><div class="concept-names"><span class="cn-unity">Cinemachine</span><span class="cn-arrow">→</span><span class="cn-ue">Spring Arm + Camera</span></div><div class="concept-desc">A Spring Arm component handles camera lag and collision automatically. Attach a camera to the end and it just works. Sequencer handles cutscenes.</div></div>
+      <div class="concept-row"><div class="concept-names"><span class="cn-unity">NGO Multiplayer</span><span class="cn-arrow">→</span><span class="cn-ue">Blueprint Replication</span></div><div class="concept-desc">No external library needed. Just tick "Replicated" on your Blueprint variables and use Server/Client event types. Unreal's networking is built in.</div></div>
     </div>
   </div>
 </div>
@@ -287,14 +282,21 @@ body::before{content:'';position:fixed;inset:0;background-image:url("data:image/
   <div class="rule-body">
     <div class="trap-list">
       <div class="trap"><strong>Don't use baked lighting</strong>You're using Lumen — it's fully dynamic and real-time. Baking lighting disables Lumen entirely and makes every small change take 20+ minutes to rebuild. Never bake.</div>
-      <div class="trap"><strong>Don't store changing values in Data Assets</strong>Data Assets are read-only config (like a settings file). Values that change during gameplay — like the current food count — live in the Game Instance, not in a Data Asset.</div>
-      <div class="trap"><strong>Don't use Get Player Controller for game logic</strong>In multiplayer, Player Controller behaves differently on servers vs clients and will give you wrong data. Use Game State and Game Instance for anything all players need to agree on.</div>
-      <div class="trap ok"><strong>Blueprint is completely fine — you don't need C++</strong>Blueprint handles 100% of what this game needs. Unreal's C++ exists for performance-critical engine-level stuff, not gameplay. Use the same principles as Unity: managers own state, components own behavior, dispatchers handle communication.</div>
+      <div class="trap"><strong>Don't store changing values in Data Assets</strong>Data Assets are read-only config. Values that change during gameplay — like the current food count — live in the Game Instance, not in a Data Asset.</div>
+      <div class="trap"><strong>Don't use Get Player Controller for game logic</strong>In multiplayer, Player Controller behaves differently on servers vs clients. Use Game State and Game Instance for anything all players need to agree on.</div>
+      <div class="trap ok"><strong>Blueprint is completely fine — you don't need C++</strong>Blueprint handles 100% of what this game needs. Use the same principles as Unity: managers own state, components own behavior, dispatchers handle communication.</div>
     </div>
   </div>
 </div>
 
+<!-- ACTIVITY LOG -->
+<div class="section-divider"><div class="sdline"></div><div class="sdlabel sdl-arch">Activity Log</div><div class="sdline"></div></div>
+<div class="activity-log" id="activity-log">
+  <div class="activity-empty">No activity yet — start checking off tasks!</div>
 </div>
+
+</div><!-- /.page -->
+
 <script type="module" src="app.js"></script>
 </body>
 </html>
